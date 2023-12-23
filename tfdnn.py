@@ -11,18 +11,24 @@ import numpy as np
 import tensorflow.keras.layers as layers
 import tensorflow.keras as keras
 
+# https://keras.io/examples/structured_data/structured_data_classification_from_scratch/
 
 import matplotlib.pyplot as plt
-plt.show()
 
 data = pd.read_csv("times.csv")
-dataset = data.drop(['guide'],axis=1)
 
-train_dataset = dataset.sample(frac=1, random_state=0)
-test_dataset = dataset.drop(train_dataset.index)
-test_dataset = np.asarray(test_dataset).astype(np.float32)
-lookup = layers.StringLookup(output_mode="one_hot")
-print(train_dataset.to_string())
+
+dataframe = data.drop(['guide'],axis=1)
+
+for col in dataframe.columns:
+    print(col)
+
+print(dataframe)
+
+val_dataframe = dataframe.sample(frac=0, random_state=1337)
+train_dataframe = dataframe.drop(val_dataframe.index)
+
+
 
 def dataframe_to_dataset(dataframe):
     dataframe = dataframe.copy()
@@ -64,13 +70,11 @@ def encode_categorical_feature(feature, name, dataset, is_string):
     encoded_feature = lookup(feature)
     return encoded_feature
 
-train_ds = dataframe_to_dataset(train_dataset)
+train_ds = dataframe_to_dataset(train_dataframe)
+#val_ds = dataframe_to_dataset(val_dataframe)
 
-for x, y in train_ds.take(1):
-    print("Input:", x)
-    print("Target:", y)
 
-print(train_ds)
+
 
 tod = keras.Input(shape=(1,), name="tod", dtype="int64")
 dayofweek = keras.Input(shape=(1,), name="dayofweek", dtype="int64")
@@ -83,87 +87,109 @@ difficultyText = keras.Input(shape=(1,), name="difficultyText",dtype="string")
 user_owns_count = keras.Input(shape=(1,), name="root_owns_count", dtype="int64")
 root_owns_count = keras.Input(shape=(1,), name="user_owns_count", dtype="int64")
 
+counterCake = keras.Input(shape=(1,), name='counterCake',dtype="int64")
+counterTooEasy = keras.Input(shape=(1,), name='counterTooEasy',dtype="int64")
+counterMedium = keras.Input(shape=(1,), name='counterMedium',dtype="int64")
+counterBitHard = keras.Input(shape=(1,), name='counterBitHard',dtype="int64")
+counterTooHard = keras.Input(shape=(1,), name='counterTooHard',dtype="int64")
+counterExHard = keras.Input(shape=(1,), name='counterExHard',dtype="int64")
+counterBrainFuck = keras.Input(shape=(1,), name='counterBrainFuck',dtype="int64")
+recommended = keras.Input(shape=(1,),name='recommended',dtype="int64")
+
+
+
 
 all_inputs = [
     tod,
     dayofweek,
+    static_points,
+    star,
+    difficulty,
     os,
-    difficultyText]
+    difficultyText,
+    user_owns_count,
+    root_owns_count,
+    counterCake,
+    counterTooEasy,
+    counterMedium,
+    counterBitHard,
+    counterTooHard,
+    counterExHard,
+    counterBrainFuck,
+    recommended, 
+    ]
 
 
 
 tod_encoded = encode_numerical_feature(tod, "tod", train_ds)
 daysofweek_encoded = encode_numerical_feature(dayofweek,"dayofweek",train_ds)
+static_points_encoded =  encode_numerical_feature(static_points,"static_points",train_ds)
+star_encoded = encode_numerical_feature(star,"star",train_ds)
+difficulty_encoded = encode_numerical_feature(difficulty,"difficulty",train_ds)
 os_encoded = encode_categorical_feature(os, "os", train_ds, True)
 difficultyText_encoded = encode_categorical_feature(difficultyText, "difficultyText", train_ds, True)
+user_owns_count_encoded = encode_numerical_feature(user_owns_count,"user_owns_count",train_ds)
+root_owns_count_encoded = encode_numerical_feature(root_owns_count,"root_owns_count",train_ds)
+
+
+counterCake_encoded = encode_numerical_feature(counterCake,"counterCake",train_ds)
+counterTooEasy_encoded = encode_numerical_feature(counterTooEasy,"counterTooEasy",train_ds)
+counterMedium_encoded = encode_numerical_feature(counterMedium,"counterMedium",train_ds)
+counterBitHard_encoded = encode_numerical_feature(counterBitHard,"counterBitHard",train_ds)
+counterTooHard_encoded = encode_numerical_feature(counterTooHard,"counterTooHard",train_ds)
+counterExHard_encoded = encode_numerical_feature(counterExHard,"counterExHard",train_ds)
+counterBrainFuck_encoded = encode_numerical_feature(counterBrainFuck,"counterBrainFuck",train_ds)
+
+recommended_encoded = encode_numerical_feature(recommended,"recommended",train_ds)
+
+
+
+
+
 
 all_features = layers.concatenate(
     [
-        tod_encoded,
-        daysofweek_encoded,
-        os_encoded,
-        difficultyText_encoded
+    tod_encoded,
+    daysofweek_encoded,
+    static_points_encoded,
+    star_encoded,
+    difficulty_encoded,
+    os_encoded,
+    difficultyText_encoded,
+    user_owns_count_encoded,
+    root_owns_count_encoded,
+    counterCake_encoded,
+    counterTooEasy_encoded,
+    counterMedium_encoded,
+    counterBitHard_encoded,
+    counterTooHard_encoded,
+    counterExHard_encoded,
+    counterBrainFuck_encoded,
+    recommended_encoded, 
     ]
 )
 
-train_ds = train_ds.batch(2)
+train_ds = train_ds.batch(3)
+#val_ds = val_ds.batch(1)
 
 
 #all_features = tf.reshape(all_features,shape=(,7))
 x = layers.Dense(32, activation="relu")(all_features)
 x = layers.Dropout(0.5)(x)
-output = layers.Dense(1, activation="sigmoid")(x)
+output = layers.Dense(1, activation="relu")(x)
 model = keras.Model(all_inputs, output)
-model.compile("adam", "binary_crossentropy", metrics=["mae"])
-keras.utils.plot_model(model, show_shapes=True, rankdir="LR")
+model.compile("adam", "binary_crossentropy", metrics=["mse"])
+log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=0)
+
 
 model.summary()
-model.fit(train_ds, epochs=1)
+#model.fit(train_ds, epochs=50,validation_data=val_ds, callbacks=[tensorboard_callback])
 
 
-print("DONE")
-
-print(train_dataset.to_string())
-
-sns.pairplot(train_dataset[['num_minutes', 'difficulty', 'user_owns_count']], diag_kind='kde')
-plt.show()
-
-print(train_dataset.describe().transpose())
-
-train_features = train_dataset.copy()
-test_features = test_dataset.copy()
-
-train_labels = train_features.pop('num_minutes')
-test_labels = test_features.pop('num_minutes')
+model.fit(train_ds, epochs=80, callbacks=[tensorboard_callback])
 
 
-normalizer = tf.keras.layers.Normalization(axis=-1)
-normalizer.adapt(np.array(train_features))
-
-
-
-
-
-def build_and_compile_model(norm):
-  model = keras.Sequential([
-      norm,
-      layers.Dense(64, activation='relu'),
-      layers.Dense(64, activation='relu'),
-      layers.Dense(1)
-  ])
-
-  model.compile(loss='mean_absolute_error',
-                optimizer=tf.keras.optimizers.Adam(0.001))
-  return model
-
-dnn_horsepower_model = build_and_compile_model(normalizer)
-dnn_model.summary()
-
-history = dnn_horsepower_model.fit(
-    train_features,
-    train_labels,
-    validation_split=0.2,
-    verbose=0, epochs=100)
 
 
 with open("data.json","r") as f:
@@ -237,21 +263,18 @@ preds = {}
 for idx, i in enumerate(fieldnames[4:]):
     preds[fieldnames[idx+4]] = [features[idx]]
 
-print(preds)
 now = datetime.datetime.now()
 mins = now.hour*60 + now.minute
 preds['tod'] = mins
 preds['dayofweek'] = now.weekday()
 
-preds = pd.DataFrame(preds)
-print(preds)
-preds = tfdf.keras.pd_dataframe_to_tf_dataset(preds,task=tfdf.keras.Task.REGRESSION)
-print(model.predict(preds))
+input_dict = {name: tf.convert_to_tensor([value]) for name, value in preds.items()}
+predictions = model.predict(input_dict)
 
-min_pred = 2
-guide_pred =1
+min_pred = round(predictions[0][0])
 
-print("Do: " + picked['name'] + " " + str(round(min_pred)) + "min " + str(guide_pred))
+
+print("Do: " + picked['name'] + " " + str(round(min_pred)) + "min ")
 start = datetime.datetime.now()
 withguide =  input("Did you look at a guide [0/1]: ")
 finish = datetime.datetime.now()
@@ -273,6 +296,9 @@ with open(r'times.csv', 'a', newline='') as csvfile:
 
     rowdict["tod"] = mins
     rowdict["dayofweek"] =  now.weekday()
+    rowdict["name"] = picked['name']
+    rowdict["date"] = datetime.datetime.now().strftime("%d-%m-%Y")
+
 
 
     writer.writerow(rowdict)
@@ -281,7 +307,7 @@ with open(r'times.csv', 'a', newline='') as csvfile:
 
 for idx,i in enumerate(real):
     if i['name'] == picked['name']:
-        results[idx]['authUserInRootOwns'] = True
+        real[idx]['authUserInRootOwns'] = True
 
 
 with open('data.json','w') as f:
