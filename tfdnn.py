@@ -12,6 +12,7 @@ import tensorflow.keras.layers as layers
 import tensorflow.keras as keras
 
 # https://keras.io/examples/structured_data/structured_data_classification_from_scratch/
+# Todo scrape more data
 
 import matplotlib.pyplot as plt
 
@@ -214,7 +215,13 @@ for i in real:
 
 tqdm.tqdm(initial=count,total=len(real),desc="Percentage HTB Owned",unit="boxes",unit_scale=False)
 
-picked = random.choice(not_done)
+#picked = random.choice(not_done)
+
+
+for i in not_done:
+    if i['name'] == 'Previse':
+        picked = i
+        break
 
 features = [
     picked['static_points'],
@@ -256,11 +263,13 @@ fieldnames = [
         'counterExHard',
         'counterBrainFuck',
         'recommended',
+        'name',
+        'date'
 ]
 
 
 preds = {}
-for idx, i in enumerate(fieldnames[4:]):
+for idx, i in enumerate(fieldnames[4:][:-2]):
     preds[fieldnames[idx+4]] = [features[idx]]
 
 now = datetime.datetime.now()
@@ -282,6 +291,7 @@ finish = datetime.datetime.now()
 elapsed = finish-start
 
 num_minutes = round(elapsed.seconds/60)
+num_minutes = 236
 print("Done in " + str(num_minutes))
 
 import csv
@@ -291,7 +301,7 @@ with open(r'times.csv', 'a', newline='') as csvfile:
 
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     rowdict = {'num_minutes':num_minutes,'guide':withguide}
-    for idx, i in enumerate(fieldnames[4:]):
+    for idx, i in enumerate(fieldnames[4:][:-2]):
         rowdict[fieldnames[idx+4]]=  features[idx]
 
     rowdict["tod"] = mins
@@ -311,4 +321,4 @@ for idx,i in enumerate(real):
 
 
 with open('data.json','w') as f:
-    json.dump(results, f)
+    json.dump(real, f)
