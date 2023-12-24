@@ -215,13 +215,7 @@ for i in real:
 
 tqdm.tqdm(initial=count,total=len(real),desc="Percentage HTB Owned",unit="boxes",unit_scale=False)
 
-#picked = random.choice(not_done)
-
-
-for i in not_done:
-    if i['name'] == 'Previse':
-        picked = i
-        break
+picked = random.choice(not_done)
 
 features = [
     picked['static_points'],
@@ -291,8 +285,9 @@ finish = datetime.datetime.now()
 elapsed = finish-start
 
 num_minutes = round(elapsed.seconds/60)
-num_minutes = 236
+
 print("Done in " + str(num_minutes))
+
 
 import csv
 now = datetime.datetime.now()

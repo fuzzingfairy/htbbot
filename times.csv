@@ -1,5 +1,5 @@
 num_minutes,guide,tod,dayofweek,static_points,star,difficulty,os,difficultyText,user_owns_count,root_owns_count,counterCake,counterTooEasy,counterMedium,counterBitHard,counterTooHard,counterExHard,counterBrainFuck,recommended,name,date
-97,1,1236,4,20,4.3,44,Linux,Easy,10391,9081,398,2478,2549,1026,236,90,165,0,0,9
-118,1,103,5,20,4.4,46,Windows,Easy,15717,14616,740,1,8730,2284,846,252,350,0,0,0
-158,1,960,5,20,4.7,47,Linux,Easy,10986,9915,451,3010,6866,1570,549,170,227,0,0,0
-236,1,1315,5,20,4.4,41,Linux,Easy,16546,15764,948,4643,4187,1274,210,70,140,0,Previse,23-12-2023
+97,1,1236,4,20,4.3,44,Linux,Easy,10391,9081,398,2478,2549,1026,236,90,165,0,Secret,12-22-2023
+118,1,103,5,20,4.4,46,Windows,Easy,15717,14616,740,1,8730,2284,846,252,350,0,Sauna,12-22-2023
+158,1,960,5,20,4.7,47,Linux,Easy,10986,9915,451,3010,6866,1570,549,170,227,0,Academy,12-23-2023
+236,1,1315,5,20,4.4,41,Linux,Easy,16546,15764,948,4643,4187,1274,210,70,140,0,Previse,12-23-2023
