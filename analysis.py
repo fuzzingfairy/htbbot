@@ -25,7 +25,7 @@ for col in dataframe.columns:
 
 print(dataframe)
 
-val_dataframe = dataframe.sample(frac=0, random_state=1337)
+val_dataframe = dataframe.sample(frac=0.25, random_state=1337)
 train_dataframe = dataframe.drop(val_dataframe.index)
 
 
@@ -71,7 +71,7 @@ def encode_categorical_feature(feature, name, dataset, is_string):
     return encoded_feature
 
 train_ds = dataframe_to_dataset(train_dataframe)
-#val_ds = dataframe_to_dataset(val_dataframe)
+val_ds = dataframe_to_dataset(val_dataframe)
 
 
 
@@ -169,28 +169,37 @@ all_features = layers.concatenate(
     ]
 )
 
-train_ds = train_ds.batch(3)
-#val_ds = val_ds.batch(1)
+train_ds = train_ds.batch(1)
+val_ds = val_ds.batch(1)
 
 
-#all_features = tf.reshape(all_features,shape=(,7))
-x = layers.Dense(32, activation="relu")(all_features)
-x = layers.Dropout(0.5)(x)
-output = layers.Dense(1, activation="relu")(x)
-model = keras.Model(all_inputs, output)
-model.compile("adam", "binary_crossentropy", metrics=["mse"])
-log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=0)
+things = []
+
+for i in range(40):
+    #all_features = tf.reshape(all_features,shape=(,7))
+    x = layers.Dense(i+1, activation="relu")(all_features)
+    x = layers.Dropout(0.5)(x)
+    output = layers.Dense(1, activation="relu")(x)
+    model = keras.Model(all_inputs, output)
+    model.compile("adam", "binary_crossentropy", metrics=["mse"])
+    log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=0)
 
 
-model.summary()
-#model.fit(train_ds, epochs=50,validation_data=val_ds, callbacks=[tensorboard_callback])
+    model.summary()
+    #model.fit(train_ds, epochs=50,validation_data=val_ds, callbacks=[tensorboard_callback])
 
 
-model.fit(train_ds, epochs=80, callbacks=[tensorboard_callback])
+    history = model.fit(train_ds, epochs=80, validation_data=val_ds,callbacks=[tensorboard_callback])
 
+    things.append([i,history])
 
+things = sorted(things, key=lambda x: x[1].history['val_mse'][-1])
 
+for i in things:
+    print(i[0],i[1].history['val_mse'][-1])
+
+exit()
 
 fieldnames = [
         'num_minutes',

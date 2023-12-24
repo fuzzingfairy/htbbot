@@ -224,6 +224,11 @@ if os.path.isfile("picked.pickle"):
 
     with open('now.pickle',"rb") as f:
         now = pickle.load(f)
+        finish = datetime.datetime.now()
+        elapsed = finish-now
+        num_minutes = round(elapsed.seconds/60)
+        print("Been going for " + str(num_minutes))
+
 
 else:
     picked = random.choice(not_done)
@@ -298,7 +303,7 @@ min_pred = round(predictions[0][0])
 
 
 print("Do: " + picked['name'] + " " + str(round(min_pred)) + "min ")
-start = datetime.datetime.now()
+start = now
 withguide =  input("Did you look at a guide [0/1]: ")
 finish = datetime.datetime.now()
 
@@ -322,7 +327,7 @@ with open(r'times.csv', 'a', newline='') as csvfile:
     rowdict["tod"] = mins
     rowdict["dayofweek"] =  now.weekday()
     rowdict["name"] = picked['name']
-    rowdict["date"] = datetime.datetime.now().strftime("%d-%m-%Y")
+    rowdict["date"] = datetime.datetime.now().strftime("%m-%d-%Y")
 
 
 
