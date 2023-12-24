@@ -10,7 +10,8 @@ import tensorflow as tf
 import numpy as np
 import tensorflow.keras.layers as layers
 import tensorflow.keras as keras
-
+import os
+import pickle
 # https://keras.io/examples/structured_data/structured_data_classification_from_scratch/
 # Todo scrape more data
 
@@ -82,7 +83,7 @@ dayofweek = keras.Input(shape=(1,), name="dayofweek", dtype="int64")
 static_points = keras.Input(shape=(1,), name="static_points", dtype="int64")
 star = keras.Input(shape=(1,), name="star")
 difficulty = keras.Input(shape=(1,), name="difficulty", dtype="int64")
-os = keras.Input(shape=(1,), name="os", dtype="string")
+operatingsystem = keras.Input(shape=(1,), name="os", dtype="string")
 difficultyText = keras.Input(shape=(1,), name="difficultyText",dtype="string")
 
 user_owns_count = keras.Input(shape=(1,), name="root_owns_count", dtype="int64")
@@ -106,7 +107,7 @@ all_inputs = [
     static_points,
     star,
     difficulty,
-    os,
+    operatingsystem,
     difficultyText,
     user_owns_count,
     root_owns_count,
@@ -127,7 +128,7 @@ daysofweek_encoded = encode_numerical_feature(dayofweek,"dayofweek",train_ds)
 static_points_encoded =  encode_numerical_feature(static_points,"static_points",train_ds)
 star_encoded = encode_numerical_feature(star,"star",train_ds)
 difficulty_encoded = encode_numerical_feature(difficulty,"difficulty",train_ds)
-os_encoded = encode_categorical_feature(os, "os", train_ds, True)
+os_encoded = encode_categorical_feature(operatingsystem, "os", train_ds, True)
 difficultyText_encoded = encode_categorical_feature(difficultyText, "difficultyText", train_ds, True)
 user_owns_count_encoded = encode_numerical_feature(user_owns_count,"user_owns_count",train_ds)
 root_owns_count_encoded = encode_numerical_feature(root_owns_count,"root_owns_count",train_ds)
@@ -215,7 +216,28 @@ for i in real:
 
 tqdm.tqdm(initial=count,total=len(real),desc="Percentage HTB Owned",unit="boxes",unit_scale=False)
 
-picked = random.choice(not_done)
+
+
+if os.path.isfile("picked.pickle"):
+    with open("picked.pickle","rb") as f:
+        picked = pickle.load(f)
+
+    with open('now.pickle',"rb") as f:
+        now = pickle.load(f)
+
+else:
+    picked = random.choice(not_done)
+    now = datetime.datetime.now()
+
+
+with open("picked.pickle","wb") as f:
+    pickle.dump(picked,f)
+
+with open('now.pickle',"wb") as f:
+    pickle.dump(now,f)
+
+
+mins = now.hour*60 + now.minute
 
 features = [
     picked['static_points'],
@@ -266,8 +288,6 @@ preds = {}
 for idx, i in enumerate(fieldnames[4:][:-2]):
     preds[fieldnames[idx+4]] = [features[idx]]
 
-now = datetime.datetime.now()
-mins = now.hour*60 + now.minute
 preds['tod'] = mins
 preds['dayofweek'] = now.weekday()
 
@@ -317,3 +337,7 @@ for idx,i in enumerate(real):
 
 with open('data.json','w') as f:
     json.dump(real, f)
+
+
+os.remove("picked.pickle") 
+os.remove("now.pickle") 
