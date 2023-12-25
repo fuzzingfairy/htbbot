@@ -8,7 +8,7 @@ Scrapes hackthebox data from site.
 python3 scrape.py
 ```
 
-Picks hardest box based off of predicted model.
+Picks hardest box based off of predictive model.
 ```
 python3 hardest.py
 ```
