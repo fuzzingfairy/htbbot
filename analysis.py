@@ -177,8 +177,6 @@ things = []
 
 x = layers.Dense(32, activation="relu")(all_features)
 x = layers.Dropout(0.5)(x)
-x = layers.Dense(6, activation="relu")(x)
-x = layers.Dropout(0.5)(x)
 output = layers.Dense(1, activation="relu")(x)
 model = keras.Model(all_inputs, output)
 model.compile("adam", "binary_crossentropy", metrics=["mse"])
