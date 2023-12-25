@@ -36,7 +36,7 @@ python3 tjnullhard.py
 
 # TODO
 - [x] add tjnull challenge boxes
-- [ ] write datato sqlite datbase for easier querying and manipulations
+- [ ] write data to sqlite database for easier querying and manipulations
 - [ ] save predictions to  database so that easiest and hardest scripts don't take too long
 - [ ] add htb track functionality
 - [ ] add challenge tracking
