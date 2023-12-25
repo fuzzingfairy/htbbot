@@ -12,10 +12,11 @@ for picked in not_done:
     orded_boxes.append([picked,min_pred])
 
 orded_boxes = sorted(orded_boxes, key=lambda x: x[1])
-picked = orded_boxes[-1]
+picked = orded_boxes[1]
 print("Do Box: " ,picked[0],picked[1])
 
 picked,now = load_start(picked)
+print(picked)
 print("Do: ",picked['name'])
 guide = input("Did you use  a guide [1/0]?")
 write_done([picked['name']])

@@ -27,7 +27,14 @@ Picks a random tjnull starter boxes that you have not done.
 python3 tjnull.py
 ```
 
-# Structure
+# TODO
+- [ ] write datato sqlite datbase for easier querying and manipulations
+- [ ] save predictions to  database so that easiest and hardest scripts don't take too long
+- [ ] add htb track functionality
+- [ ] add challenge tracking
+- [ ] add sherlocks
+
+# FIle Structure
 
 ## data
 - `data/data.json` raw box data used to track number of boxes done

@@ -105,13 +105,15 @@ def write_times(now,guide,boxinfo):
         elapsed = finish-now
         data['num_minutes'] = round(elapsed.seconds/60)
         writer.writerow(data)
+    os.remove("data/picked.pickle") 
+    os.remove("data/now.pickle") 
 
 def load_start(picked):
     if os.path.isfile("picked.pickle"):
-        with open("picked.pickle","rb") as f:
+        with open("data/picked.pickle","rb") as f:
             picked = pickle.load(f)
 
-        with open('now.pickle',"rb") as f:
+        with open('data/now.pickle',"rb") as f:
             now = pickle.load(f)
             finish = datetime.datetime.now()
             elapsed = finish-now

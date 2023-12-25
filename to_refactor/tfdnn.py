@@ -325,5 +325,3 @@ with open('data.json','w') as f:
     json.dump(real, f)
 
 
-os.remove("picked.pickle") 
-os.remove("now.pickle") 
