@@ -21,6 +21,6 @@ python3 tjnull.py
 # Structure
 
 ## data
-- data/data.json raw box data used to track number of boxes done
-- data/times.csv records box info and the time it took you to do a box
-- data/tjnullstarter list of tjnull starter boxes
+- `data/data.json` raw box data used to track number of boxes done
+- `data/times.csv` records box info and the time it took you to do a box
+- `data/tjnullstarter` list of tjnull starter boxes
