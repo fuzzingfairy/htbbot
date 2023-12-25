@@ -7,13 +7,22 @@ Scrapes hackthebox data from site.
 ```
 python3 scrape.py
 ```
+Trains predictive model based on data in `data\times.csv`
+```
+python3 train.py
+```
 
-Picks box that takes the longest tiem based on a predictive model.
+Picks box that takes the shortest time based on the predictive model.
+```
+python3 easiest.py
+```
+
+Picks box that takes the longest time based on the predictive model.
 ```
 python3 hardest.py
 ```
 
-Picks 3 random tjnull starter boxes that you have not done.
+Picks a random tjnull starter boxes that you have not done.
 ```
 python3 tjnull.py
 ```
