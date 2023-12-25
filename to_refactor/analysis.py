@@ -274,5 +274,6 @@ for picked in not_done:
 
 
 res = sorted(res, key=lambda x: x[1])
+
 for i in res:
     print(i[0],i[1])
