@@ -10,8 +10,10 @@ import tensorflow as tf
 import numpy as np
 import tensorflow.keras.layers as layers
 import tensorflow.keras as keras
-
+import os
+import pickle
 # https://keras.io/examples/structured_data/structured_data_classification_from_scratch/
+# Todo scrape more data
 
 import matplotlib.pyplot as plt
 
@@ -81,7 +83,7 @@ dayofweek = keras.Input(shape=(1,), name="dayofweek", dtype="int64")
 static_points = keras.Input(shape=(1,), name="static_points", dtype="int64")
 star = keras.Input(shape=(1,), name="star")
 difficulty = keras.Input(shape=(1,), name="difficulty", dtype="int64")
-os = keras.Input(shape=(1,), name="os", dtype="string")
+operatingsystem = keras.Input(shape=(1,), name="os", dtype="string")
 difficultyText = keras.Input(shape=(1,), name="difficultyText",dtype="string")
 
 user_owns_count = keras.Input(shape=(1,), name="root_owns_count", dtype="int64")
@@ -105,7 +107,7 @@ all_inputs = [
     static_points,
     star,
     difficulty,
-    os,
+    operatingsystem,
     difficultyText,
     user_owns_count,
     root_owns_count,
@@ -126,7 +128,7 @@ daysofweek_encoded = encode_numerical_feature(dayofweek,"dayofweek",train_ds)
 static_points_encoded =  encode_numerical_feature(static_points,"static_points",train_ds)
 star_encoded = encode_numerical_feature(star,"star",train_ds)
 difficulty_encoded = encode_numerical_feature(difficulty,"difficulty",train_ds)
-os_encoded = encode_categorical_feature(os, "os", train_ds, True)
+os_encoded = encode_categorical_feature(operatingsystem, "os", train_ds, True)
 difficultyText_encoded = encode_categorical_feature(difficultyText, "difficultyText", train_ds, True)
 user_owns_count_encoded = encode_numerical_feature(user_owns_count,"user_owns_count",train_ds)
 root_owns_count_encoded = encode_numerical_feature(root_owns_count,"root_owns_count",train_ds)
@@ -169,15 +171,12 @@ all_features = layers.concatenate(
     ]
 )
 
-train_ds = train_ds.batch(1)
-#sval_ds = val_ds.batch(1)
+train_ds = train_ds.batch(3)
+#val_ds = val_ds.batch(1)
 
 
-things = []
-
+#all_features = tf.reshape(all_features,shape=(,7))
 x = layers.Dense(32, activation="relu")(all_features)
-x = layers.Dropout(0.5)(x)
-x = layers.Dense(6, activation="relu")(x)
 x = layers.Dropout(0.5)(x)
 output = layers.Dense(1, activation="relu")(x)
 model = keras.Model(all_inputs, output)
@@ -190,29 +189,8 @@ model.summary()
 #model.fit(train_ds, epochs=50,validation_data=val_ds, callbacks=[tensorboard_callback])
 
 
-history = model.fit(train_ds, epochs=60,callbacks=[tensorboard_callback])
+model.fit(train_ds, epochs=80, callbacks=[tensorboard_callback])
 
-fieldnames = [
-        'num_minutes',
-        'guide',
-        'tod',
-        'dayofweek',
-        'static_points',
-        'star',
-        'difficulty',
-        'os',
-        'difficultyText',
-        'user_owns_count',
-        'root_owns_count',
-        'counterCake',
-        'counterTooEasy',
-        'counterMedium',
-        'counterBitHard',
-        'counterTooHard',
-        'counterExHard',
-        'counterBrainFuck',
-        'recommended',
-]
 
 
 
@@ -234,47 +212,144 @@ for i in real:
     else:
         not_done.append(i)
 
-res = []
-for picked in not_done:
-    features = [
-        picked['static_points'],
-        picked['star'],
-        picked['difficulty'],
-        picked['os'],
-        picked['difficultyText'],
-        picked['user_owns_count'],
-        picked['root_owns_count'],
-        picked['feedbackForChart']['counterCake'],
-        picked['feedbackForChart']['counterTooEasy'],
-        picked['feedbackForChart']['counterMedium'],
-        picked['feedbackForChart']['counterBitHard'],
-        picked['feedbackForChart']['counterTooHard'],
-        picked['feedbackForChart']['counterExHard'],
-        picked['feedbackForChart']['counterBrainFuck'],
-        picked['recommended']
 
 
-    ]
+tqdm.tqdm(initial=count,total=len(real),desc="Percentage HTB Owned",unit="boxes",unit_scale=False)
 
 
-    preds = {}
-    for idx, i in enumerate(fieldnames[4:]):
-        preds[fieldnames[idx+4]] = features[idx]
 
-    #print(preds)
+if os.path.isfile("picked.pickle"):
+    with open("picked.pickle","rb") as f:
+        picked = pickle.load(f)
+
+    with open('now.pickle',"rb") as f:
+        now = pickle.load(f)
+        finish = datetime.datetime.now()
+        elapsed = finish-now
+        num_minutes = round(elapsed.seconds/60)
+        print("Been going for " + str(num_minutes))
 
 
+else:
+    if input("Pick one [Y/n]: ") ==  "Y":
+        boxname = input("Boxname: ")
+        for i in not_done:
+            if i["name"] == boxname:
+                picked = i
+                break
+    else:
+        picked = random.choice(not_done)
     now = datetime.datetime.now()
-    mins = now.hour*60 + now.minute
-    preds['tod'] = mins
-    preds['dayofweek'] = now.weekday()
-    input_dict = {name: tf.convert_to_tensor([value]) for name, value in preds.items()}
-    predictions = model.predict(input_dict)
-    min_pred = round(predictions[0][0])
-    print(picked['name'],min_pred)
-    res.append([picked['name'],min_pred])
 
 
-res = sorted(res, key=lambda x: x[1])
-for i in res:
-    print(i[0],i[1])
+with open("picked.pickle","wb") as f:
+    pickle.dump(picked,f)
+
+with open('now.pickle',"wb") as f:
+    pickle.dump(now,f)
+
+
+mins = now.hour*60 + now.minute
+
+features = [
+    picked['static_points'],
+    picked['star'],
+    picked['difficulty'],
+    picked['os'],
+    picked['difficultyText'],
+    picked['user_owns_count'],
+    picked['root_owns_count'],
+    picked['feedbackForChart']['counterCake'],
+    picked['feedbackForChart']['counterTooEasy'],
+    picked['feedbackForChart']['counterMedium'],
+    picked['feedbackForChart']['counterBitHard'],
+    picked['feedbackForChart']['counterTooHard'],
+    picked['feedbackForChart']['counterExHard'],
+    picked['feedbackForChart']['counterBrainFuck'],
+    picked['recommended']
+
+
+]
+
+fieldnames = [
+        'num_minutes',
+        'guide',
+        'tod',
+        'dayofweek',
+        'static_points',
+        'star',
+        'difficulty',
+        'os',
+        'difficultyText',
+        'user_owns_count',
+        'root_owns_count',
+        'counterCake',
+        'counterTooEasy',
+        'counterMedium',
+        'counterBitHard',
+        'counterTooHard',
+        'counterExHard',
+        'counterBrainFuck',
+        'recommended',
+        'name',
+        'date'
+]
+
+
+preds = {}
+for idx, i in enumerate(fieldnames[4:][:-2]):
+    preds[fieldnames[idx+4]] = [features[idx]]
+
+preds['tod'] = mins
+preds['dayofweek'] = now.weekday()
+
+input_dict = {name: tf.convert_to_tensor([value]) for name, value in preds.items()}
+predictions = model.predict(input_dict)
+
+min_pred = round(predictions[0][0])
+
+
+print("Do: " + picked['name'] + " " + str(round(min_pred)) + "min ")
+start = now
+withguide =  input("Did you look at a guide [0/1]: ")
+finish = datetime.datetime.now()
+
+elapsed = finish-start
+
+num_minutes = round(elapsed.seconds/60)
+
+print("Done in " + str(num_minutes))
+
+
+import csv
+now = datetime.datetime.now()
+mins = now.hour*60 + now.minute
+with open(r'times.csv', 'a', newline='') as csvfile:
+
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    rowdict = {'num_minutes':num_minutes,'guide':withguide}
+    for idx, i in enumerate(fieldnames[4:][:-2]):
+        rowdict[fieldnames[idx+4]]=  features[idx]
+
+    rowdict["tod"] = mins
+    rowdict["dayofweek"] =  now.weekday()
+    rowdict["name"] = picked['name']
+    rowdict["date"] = datetime.datetime.now().strftime("%m-%d-%Y")
+
+
+
+    writer.writerow(rowdict)
+
+
+
+for idx,i in enumerate(real):
+    if i['name'] == picked['name']:
+        real[idx]['authUserInRootOwns'] = True
+
+
+with open('data.json','w') as f:
+    json.dump(real, f)
+
+
+os.remove("picked.pickle") 
+os.remove("now.pickle") 
