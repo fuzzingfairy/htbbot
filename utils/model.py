@@ -243,3 +243,5 @@ def create_prediction_data(picked):
         "counterBrainFuck":tf.convert_to_tensor([picked['feedbackForChart']['counterBrainFuck']]),
         "recommended":tf.convert_to_tensor([picked['recommended']]),
     }
+
+

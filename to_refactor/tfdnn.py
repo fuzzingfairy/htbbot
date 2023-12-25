@@ -218,23 +218,6 @@ tqdm.tqdm(initial=count,total=len(real),desc="Percentage HTB Owned",unit="boxes"
 
 
 
-if os.path.isfile("picked.pickle"):
-    with open("picked.pickle","rb") as f:
-        picked = pickle.load(f)
-
-    with open('now.pickle',"rb") as f:
-        now = pickle.load(f)
-        finish = datetime.datetime.now()
-        elapsed = finish-now
-        num_minutes = round(elapsed.seconds/60)
-        print("Been going for " + str(num_minutes))
-
-
-else:
-    picked = random.choice(not_done)
-    now = datetime.datetime.now()
-
-
 with open("picked.pickle","wb") as f:
     pickle.dump(picked,f)
 
@@ -315,9 +298,6 @@ num_minutes = round(elapsed.seconds/60)
 print("Done in " + str(num_minutes))
 
 
-import csv
-now = datetime.datetime.now()
-mins = now.hour*60 + now.minute
 with open(r'data/times.csv', 'a', newline='') as csvfile:
 
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
