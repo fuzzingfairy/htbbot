@@ -5,7 +5,7 @@ import random
 _, not_done = load_boxes()
 
 
-lines = open("data/tjnullstarter","r").read().split()
+lines = open("data/tjnullhard","r").read().split()
 
 
 to_do = []
@@ -14,7 +14,7 @@ for i in lines:
         if i == j["name"]:
             to_do.append(j)
 
-tqdm.tqdm(initial=len(lines)-len(to_do),total=len(lines),desc="Percentage TJnull starter Done",unit="boxes",unit_scale=False)
+tqdm.tqdm(initial=len(lines)-len(to_do),total=len(lines),desc="Percentage TJnull hard Done",unit="boxes",unit_scale=False)
 
 picked = random.choice(to_do)
 picked,now = load_start(picked)

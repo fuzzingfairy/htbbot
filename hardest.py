@@ -13,8 +13,7 @@ for picked in not_done:
 
 orded_boxes = sorted(orded_boxes, key=lambda x: x[1])
 picked = orded_boxes[-1]
-print("Do Box: " ,picked[0],picked[1])
-
+picked = picked[0]
 picked,now = load_start(picked)
 print("Do: ",picked['name'])
 guide = input("Did you use  a guide [1/0]?")

@@ -15,6 +15,7 @@ orded_boxes = sorted(orded_boxes, key=lambda x: x[1])
 picked = orded_boxes[1]
 print("Do Box: " ,picked[0],picked[1])
 
+picked = picked[0]
 picked,now = load_start(picked)
 print(picked)
 print("Do: ",picked['name'])

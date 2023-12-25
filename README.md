@@ -27,7 +27,15 @@ Picks a random tjnull starter boxes that you have not done.
 python3 tjnull.py
 ```
 
+
+Picks a random tjnull challenge boxes that you have not done.
+```
+python3 tjnullhard.py
+```
+
+
 # TODO
+- [x] add tjnull challenge boxes
 - [ ] write datato sqlite datbase for easier querying and manipulations
 - [ ] save predictions to  database so that easiest and hardest scripts don't take too long
 - [ ] add htb track functionality
