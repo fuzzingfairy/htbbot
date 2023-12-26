@@ -28,3 +28,8 @@ class Box(models.Model):
     counterExHard = models.IntegerField()                                                                   
     counterBrainFuck = models.IntegerField()  
     predicted_minutes = models.IntegerField(default=None, blank=True,null=True)  
+
+
+class Track(models.Model):
+    name = models.CharField(max_length=30)
+    boxes = models.ManyToManyField(Box)
