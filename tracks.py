@@ -29,9 +29,9 @@ all_boxes = Track.objects.get(name=track.name).boxes.all()
 to_do = Track.objects.get(name=track.name).boxes.filter(authUserInRootOwns=False)
 
 
-tqdm.tqdm(initial=len(all_boxes)-len(to_do),total=len(all_boxes),desc="Percentage TJnull starter Done",unit="boxes",unit_scale=False)
 
 picked = random.choice(to_do)
+tqdm.tqdm(initial=len(all_boxes)-len(to_do),total=len(all_boxes),desc=picked.name,unit="boxes",unit_scale=False)
 picked,now = load_start(picked)
 print("Do: ",picked.name)
 if input("Accept [Y/n]") not in ["Y","y"]:
