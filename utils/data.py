@@ -4,6 +4,29 @@ import pickle
 import datetime
 import csv
 
+
+def init_django():
+    import django
+    from django.conf import settings
+
+    if settings.configured:
+        return
+
+    settings.configure(
+        INSTALLED_APPS=[
+            'utils',
+        ],
+        DATABASES={
+            "default":{
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': "data/db.sqlite3"
+            }
+        }
+    )
+
+    django.setup()
+    print("called")
+
 def load_boxes():
     with open("data/data.json","r") as f:
         data = json.load(f)
