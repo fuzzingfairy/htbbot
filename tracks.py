@@ -11,8 +11,15 @@ from mysite.htb.models import  *
 
 print("Pick a track:")
 tracks = Track.objects.all()
-for idx,i in enumerate(tracks):
-    print("Track: ",idx,i.name)
+for idx,track in enumerate(tracks):
+    all_boxes = Track.objects.get(name=track.name).boxes.all()
+    to_do = Track.objects.get(name=track.name).boxes.filter(authUserInRootOwns=False)
+    if len(to_do) == 0:
+        print("Track: ",idx,track.name,"[Done]")
+    else:
+        print("Track: ",idx,track.name)
+
+    
 
 idx = int(input("Track number: "))
 track = tracks[idx]
@@ -27,6 +34,9 @@ tqdm.tqdm(initial=len(all_boxes)-len(to_do),total=len(all_boxes),desc="Percentag
 picked = random.choice(to_do)
 picked,now = load_start(picked)
 print("Do: ",picked.name)
+if input("Accept [Y/n]") not in ["Y","y"]:
+    exit()
+
 guide = input("Did you use  a guide [1/0]?")
 
 picked.authUserInRootOwns = True

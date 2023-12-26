@@ -32,4 +32,7 @@ class Box(models.Model):
 
 class Track(models.Model):
     name = models.CharField(max_length=30)
+    description = models.CharField(max_length=400)
+    difficulty = models.CharField(max_length=30)
+    staff_pick = models.IntegerField()
     boxes = models.ManyToManyField(Box)
