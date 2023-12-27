@@ -9,23 +9,31 @@ django.setup()
 from mysite.htb.models import  *
 
 
-lines = json.load(open("data/data.json","r"))
+#lines = json.load(open("data/data.json","r"))
+
+lines = ["Gobox"]
 print(len(lines))
 for track in lines:
-    name =track["name"]
-    des = track["description"]
-    dif = track["difficulty"]
+    name = "fun"
+    des = "Just for Emma"
+    dif = "Medium"
     defaults = {
         "description":des,
         "difficulty":dif,
-        "staff_pick":track["staff_pick"]
+        "staff_pick":0
     }
 
     boxestoadd = []
+    """
     for i in track["items"]:
         if i["type"] == "machine":
             box = Box.objects.filter(name=i["name"])[0]
             boxestoadd.append(box)
+    """
+
+    for i in lines:
+        box = Box.objects.filter(name=i)[0]
+        boxestoadd.append(box)
         
     if boxestoadd != []:
         track,_ = Track.objects.update_or_create(
