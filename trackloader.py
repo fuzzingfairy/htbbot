@@ -9,13 +9,13 @@ django.setup()
 from mysite.htb.models import  *
 
 
-#lines = json.load(open("data/data.json","r"))
+lines = open("data/tjnulloriginal","r").read().split()
 
-lines = ["Gobox"]
+#lines = ["Gobox"]
 print(len(lines))
-for track in lines:
-    name = "fun"
-    des = "Just for Emma"
+for _ in [1]:
+    name = "TJNULL 2022 hard"
+    des = "TJNULL 2022 hard"
     dif = "Medium"
     defaults = {
         "description":des,
@@ -32,9 +32,10 @@ for track in lines:
     """
 
     for i in lines:
-        box = Box.objects.filter(name=i)[0]
+        print(i)
+        box = Box.objects.filter(name__icontains=i)[0]
         boxestoadd.append(box)
-        
+    print(boxestoadd)
     if boxestoadd != []:
         track,_ = Track.objects.update_or_create(
         name = name,

@@ -10,14 +10,19 @@ from mysite.htb.models import  *
 
 
 print("Pick a track:")
-tracks = Track.objects.all()
+tracks = Track.objects.all().order_by('name')
 for idx,track in enumerate(tracks):
     all_boxes = Track.objects.get(name=track.name).boxes.all()
     to_do = Track.objects.get(name=track.name).boxes.filter(authUserInRootOwns=False)
     if len(to_do) == 0:
         print("Track: ",idx,track.name,"[Done]")
     else:
-        print("Track: ",idx,track.name)
+        all_boxes = Track.objects.get(name=track.name).boxes.all()
+        to_do = Track.objects.get(name=track.name).boxes.filter(authUserInRootOwns=False)
+
+        a = len(all_boxes)
+        t = len(to_do)
+        print("Track: ",idx,track.name,str(round((a-t)/a*100))+"%")
 
     
 
@@ -43,5 +48,7 @@ guide = input("Did you use  a guide [1/0]? ")
 picked.authUserInRootOwns = True
 finish = datetime.datetime.now()
 elapsed = finish-now
-picked.num_minutes = round(elapsed.seconds/60)
+num_minutes = round(elapsed.seconds/60)
+print("Done in",num_minutes)
+picked.num_minutes = num_minutes
 picked.save()
