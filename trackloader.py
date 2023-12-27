@@ -14,8 +14,8 @@ lines = open("data/tjnulloriginal","r").read().split()
 #lines = ["Gobox"]
 print(len(lines))
 for _ in [1]:
-    name = "TJNULL 2022 hard"
-    des = "TJNULL 2022 hard"
+    name = "Ismael Rodriguez OSCP top 10"
+    des = ""
     dif = "Medium"
     defaults = {
         "description":des,
