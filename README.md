@@ -45,12 +45,20 @@ Track:  34 fun 0%
 Track number: 
 ```
 
+`besttjnull` ranks boxes by how many tjnull lists they have appeared on
+```                                                                                                                                                                                                                               
+┌──(kali㉿kali)-[~/htb/random]
+└─$ python3 besttjnull.py
+Forest:  15%|████████████████████████████                                                                                                                                                              | 21/139 [00:00<?, ?boxes/s]
+Do:  Forest rank 3
+```
+
 
 # TODO
 - [x] add tjnull challenge boxes
-- [ ] write data to sqlite database for easier querying and manipulations
+- [x] write data to sqlite database for easier querying and manipulations
 - [ ] save predictions to  database so that easiest and hardest scripts don't take too long
-- [ ] add htb track functionality
+- [x] add htb track functionality
 - [ ] add challenge tracking
 - [ ] add sherlocks
 
