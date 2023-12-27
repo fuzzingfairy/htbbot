@@ -28,16 +28,20 @@ track = tracks[idx]
 all_boxes = Track.objects.get(name=track.name).boxes.all()
 to_do = Track.objects.get(name=track.name).boxes.filter(authUserInRootOwns=False)
 
+for i in to_do:
+    print(i.name, i.difficultyText)
 
 
 picked = random.choice(to_do)
 tqdm.tqdm(initial=len(all_boxes)-len(to_do),total=len(all_boxes),desc=picked.name,unit="boxes",unit_scale=False)
 picked,now = load_start(picked)
 print("Do: ",picked.name)
-if input("Accept [Y/n]") not in ["Y","y"]:
+if input("Accept [Y/n]: ") not in ["Y","y"]:
     exit()
 
-guide = input("Did you use  a guide [1/0]?")
-
+guide = input("Did you use  a guide [1/0]? ")
 picked.authUserInRootOwns = True
+finish = datetime.datetime.now()
+elapsed = finish-now
+picked.num_minutes = round(elapsed.seconds/60)
 picked.save()
