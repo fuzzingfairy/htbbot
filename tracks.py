@@ -33,14 +33,13 @@ track = tracks[idx]
 all_boxes = Track.objects.get(name=track.name).boxes.all()
 to_do = Track.objects.get(name=track.name).boxes.filter(authUserInRootOwns=False)
 
-for i in to_do:
-    print(i.name, i.difficultyText)
-
+for i in all_boxes:
+    print(i.name,i.authUserInRootOwns)
 
 picked = random.choice(to_do)
 tqdm.tqdm(initial=len(all_boxes)-len(to_do),total=len(all_boxes),desc=picked.name,unit="boxes",unit_scale=False)
 picked,now = load_start(picked)
-print("Do: ",picked.name)
+print("Do: ",picked.name,picked.difficultyText)
 if input("Accept [Y/n]: ") not in ["Y","y"]:
     exit()
 
